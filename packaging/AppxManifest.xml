@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+         xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+         xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+         xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+         IgnorableNamespaces="uap desktop rescap">
+  <Identity Name="WeekNumberIcon" Publisher="CN=Riccardo Torreggiani" Version="0.1.0.0" ProcessorArchitecture="x64" />
+  <Properties>
+    <DisplayName>Week Number Icon</DisplayName>
+    <PublisherDisplayName>Riccardo Torreggiani</PublisherDisplayName>
+    <Logo>Assets\Square150x150Logo.png</Logo>
+  </Properties>
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.26100.0" />
+  </Dependencies>
+  <Resources>
+    <Resource Language="en-us" />
+  </Resources>
+  <Applications>
+    <Application Id="App" Executable="week-number-icon.exe" EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements DisplayName="Week Number Icon" Description="ISO week number in the notification area"
+                          Square150x150Logo="Assets\Square150x150Logo.png"
+                          Square44x44Logo="Assets\Square44x44Logo.png" BackgroundColor="transparent" />
+      <Extensions>
+        <desktop:Extension Category="windows.startupTask" Executable="week-number-icon.exe" EntryPoint="Windows.FullTrustApplication">
+          <desktop:StartupTask TaskId="WeekNumberStartup" Enabled="true" DisplayName="Week Number Icon" />
+        </desktop:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+  <Capabilities>
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
+</Package>

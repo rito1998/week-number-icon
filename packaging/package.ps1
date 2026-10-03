@@ -20,11 +20,11 @@ if (-not $Version) {
 }
 $exeName = 'week-number-icon.exe'
 
-# Zig target triple -> MSIX ProcessorArchitecture
+# Zig cpu arch tag -> MSIX ProcessorArchitecture
 $targets = [ordered]@{
-    'x86_64-windows'  = 'x64'
-    'x86-windows'     = 'x86'
-    'aarch64-windows' = 'arm64'
+    'x86_64'  = 'x64'
+    'x86'     = 'x86'
+    'aarch64' = 'arm64'
 }
 
 $sdkBin = Join-Path ${env:ProgramFiles(x86)} 'Windows Kits\10\bin'
@@ -50,33 +50,6 @@ elseif ($CertificateThumbprint) {
     $publisher = $certificate.Subject
 }
 
-function New-Logo {
-    param([string]$Path, [int]$Size)
-
-    $bitmap = [Drawing.Bitmap]::new($Size, $Size)
-    $graphics = [Drawing.Graphics]::FromImage($bitmap)
-    $background = [Drawing.SolidBrush]::new([Drawing.Color]::FromArgb(23, 92, 105))
-    $foreground = [Drawing.SolidBrush]::new([Drawing.Color]::White)
-    $font = [Drawing.Font]::new('Segoe UI', ($Size * 0.55), [Drawing.FontStyle]::Bold, [Drawing.GraphicsUnit]::Pixel)
-    try {
-        $graphics.Clear([Drawing.Color]::Transparent)
-        $graphics.FillRectangle($background, 0, 0, $Size, $Size)
-        $format = [Drawing.StringFormat]::new()
-        try {
-            $format.Alignment = [Drawing.StringAlignment]::Center
-            $format.LineAlignment = [Drawing.StringAlignment]::Center
-            $graphics.DrawString('W', $font, $foreground, [Drawing.RectangleF]::new(0, 0, $Size, $Size), $format)
-        } finally { $format.Dispose() }
-        $bitmap.Save($Path, [Drawing.Imaging.ImageFormat]::Png)
-    } finally {
-        $font.Dispose()
-        $foreground.Dispose()
-        $background.Dispose()
-        $graphics.Dispose()
-        $bitmap.Dispose()
-    }
-}
-
 Add-Type -AssemblyName System.Drawing
 
 # makeappx bundle requires a folder containing only the packages to bundle.
@@ -86,12 +59,12 @@ New-Item -ItemType Directory -Force $packages | Out-Null
 
 foreach ($target in $targets.GetEnumerator()) {
     $architecture = $target.Value
-    $exe = Join-Path $root "zig-out\$($target.Key)\bin\$exeName"
+    $exe = Join-Path $root "zig-out\$($target.Key)\$exeName"
     if (-not (Test-Path $exe)) { throw "Build the executables first (build.ps1): $exe" }
 
     $stage = Join-Path $root "zig-out\msix\stage\$architecture"
     if (Test-Path $stage) { Remove-Item $stage -Recurse -Force }
-    New-Item -ItemType Directory -Force (Join-Path $stage 'Assets') | Out-Null
+    New-Item -ItemType Directory -Force (Join-Path $stage 'assets') | Out-Null
     Copy-Item $exe $stage -Force
 
     [xml]$manifest = Get-Content (Join-Path $PSScriptRoot 'AppxManifest.xml')
@@ -110,9 +83,8 @@ foreach ($target in $targets.GetEnumerator()) {
     }
     $manifest.Save((Join-Path $stage 'AppxManifest.xml'))
 
-    foreach ($size in 44, 150) {
-        New-Logo -Path (Join-Path $stage "Assets\Square${size}x${size}Logo.png") -Size $size
-    }
+    Copy-Item ./assets/logo-44x44.png (Join-Path $stage "assets\logo-44x44.png")
+    Copy-Item ./assets/logo-150x150.png (Join-Path $stage "assets\logo-150x150.png")
 
     $output = Join-Path $packages "WeekNumberIcon_${Version}_${architecture}.msix"
     if (Test-Path $output) { Remove-Item $output }

@@ -1,4 +1,5 @@
 param(
+    [switch]$Unsigned,
     [ValidatePattern('^\d+\.\d+\.\d+\.\d+$')][string]$Version,
     [string]$CertificateThumbprint,
     # Values reserved in Partner Center; the Store signs the uploaded bundle itself.
@@ -9,6 +10,16 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+if ($Unsigned -and $StorePublisher) {
+    throw 'Do not specify -StorePublisher with -Unsigned.'
+}
+if (-not $Unsigned) {
+    if (-not $StorePublisher) { $StorePublisher = 'CN=CA91C2C7-9980-4F29-AF84-02B407E705F7' }
+    if (-not $IdentityName) { $IdentityName = 'RiccardoTorreggiani.WeekNumberIcon' }
+    if (-not $PublisherDisplayName) { $PublisherDisplayName = 'Riccardo Torreggiani' }
+    if (-not $DisplayName) { $DisplayName = 'Week Number Icon' }
+}
+
 $root = Split-Path $PSScriptRoot -Parent
 $zonPath = Join-Path $root 'build.zig.zon'
 if (-not $Version) {
@@ -39,7 +50,7 @@ if ($StorePublisher -and $CertificateThumbprint) {
     throw 'Use either -StorePublisher or -CertificateThumbprint, not both.'
 }
 
-# The OID marks the package as installable via Add-AppxPackage -AllowUnsigned; Store packages must not carry it.
+# The OID marks a local package as installable via Add-AppxPackage -AllowUnsigned.
 $publisher = 'CN=Riccardo Torreggiani, OID.2.25.311729368913984317654407730594956997722=1'
 if ($StorePublisher) {
     $publisher = $StorePublisher

@@ -24,18 +24,18 @@ winget install --id 9P8Z35ZBQQKW --source msstore
 zig build --release=safe
 ```
 
-### Package and install MSIX
+### Package MSIX
 
-Package MSIX and install it from an elevated powershell:
+For local testing, pass `-Unsigned` to create an unsigned bundle:
 
 ```pwsh
-./packaging/package.ps1
+./packaging/package.ps1 -Unsigned
 ```
 
-From an elevated PowerShell install the MSIX package:
+Install the local-test bundle from an elevated PowerShell:
 
 ```pwsh
-Add-AppxPackage -Path '.\zig-out\msix\WeekNumberIcon_0.1.0.0.msixbundle' -AllowUnsigned
+Add-AppxPackage -Path '.\zig-out\msix\*.msixbundle' -AllowUnsigned
 ```
 
 ## License

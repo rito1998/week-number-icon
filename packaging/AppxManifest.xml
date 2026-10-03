@@ -8,7 +8,7 @@
   <Properties>
     <DisplayName>Week Number Icon</DisplayName>
     <PublisherDisplayName>Riccardo Torreggiani</PublisherDisplayName>
-    <Logo>Assets\Square150x150Logo.png</Logo>
+    <Logo>assets\logo-150x150.png</Logo>
   </Properties>
   <Dependencies>
     <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.26100.0" />
@@ -19,8 +19,8 @@
   <Applications>
     <Application Id="App" Executable="week-number-icon.exe" EntryPoint="Windows.FullTrustApplication">
       <uap:VisualElements DisplayName="Week Number Icon" Description="ISO week number in the notification area"
-                          Square150x150Logo="Assets\Square150x150Logo.png"
-                          Square44x44Logo="Assets\Square44x44Logo.png" BackgroundColor="transparent" />
+                          Square150x150Logo="assets\logo-150x150.png"
+                          Square44x44Logo="assets\logo-44x44.png" BackgroundColor="transparent" />
       <Extensions>
         <desktop:Extension Category="windows.startupTask" Executable="week-number-icon.exe" EntryPoint="Windows.FullTrustApplication">
           <desktop:StartupTask TaskId="WeekNumberStartup" Enabled="true" DisplayName="Week Number Icon" />

@@ -10,19 +10,32 @@ This app is available through the [Microsoft Store](https://apps.microsoft.com/d
 
 [![Get it from Microsoft](https://get.microsoft.com/images/en-us%20dark.svg)](https://get.microsoft.com/installer/download/9p8z35zbqqkw?referrer=appbadge)
 
-## Build and install locally
-
-Build from source and package msix:
+Alternatively, install it with winget in PowerShell:
 
 ```pwsh
-./build.ps1
-./packaging/package.ps1
+winget install --id 9P8Z35ZBQQKW --source msstore
 ```
 
-Install app from the msix from an elevated powershell run:
+## Build
+
+### Build from source
 
 ```pwsh
-Add-AppxPackage -Path '.\zig-out\msix\WeekNumberIcon_0.1.0.0.msixbundle' -AllowUnsigned
+zig build --release=safe
+```
+
+### Package MSIX
+
+For local testing, pass `-Unsigned` to create an unsigned bundle:
+
+```pwsh
+./packaging/package.ps1 -Unsigned
+```
+
+Install the local-test bundle from an elevated PowerShell:
+
+```pwsh
+Add-AppxPackage -Path '.\zig-out\msix\*.msixbundle' -AllowUnsigned
 ```
 
 ## License

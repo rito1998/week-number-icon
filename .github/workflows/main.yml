@@ -20,18 +20,13 @@ jobs:
 
       - name: Build
         run: |
-          mkdir -p artifacts
-
-          rm -r -f /home/runner/.cache/zig
-
           zig build msix -Dunsigned --release=safe
-          tar -czf "artifacts/week-number-icon.tar.gz" -C "artifacts" .
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: artifacts
-          path: artifacts/*.tar.gz
+          name: msix-bundle
+          path: zig-out/msix/*.msixbundle
 
   release:
     needs: build_and_release
@@ -41,11 +36,8 @@ jobs:
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
-          name: artifacts
+          name: msix-bundle
           path: artifacts
-
-      - name: List downloaded artifacts
-        run: ls -lh artifacts
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
@@ -54,6 +46,6 @@ jobs:
           name: ${{ github.ref_name }}
           draft: false
           prerelease: false
-          files: artifacts/*.tar.gz
+          files: artifacts/*.msixbundle
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_ONLY_CONTENTS }}

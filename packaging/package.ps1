@@ -22,13 +22,6 @@ if (-not $Unsigned) {
 
 $root = Split-Path $PSScriptRoot -Parent
 $zonPath = Join-Path $root 'build.zig.zon'
-if (-not $Version) {
-    $zonContent = Get-Content $zonPath -Raw
-    if ($zonContent -notmatch '(?m)^\s*\.version\s*=\s*"(?<semver>\d+\.\d+\.\d+)"\s*,?\s*$') {
-        throw "Could not find a three-part SemVer .version in $zonPath."
-    }
-    $Version = "$($Matches.semver).0"
-}
 $exeName = 'week-number-icon.exe'
 
 # Zig cpu arch tag -> MSIX ProcessorArchitecture

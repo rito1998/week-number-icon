@@ -101,7 +101,8 @@ foreach ($target in $targets.GetEnumerator()) {
     Write-Host "Created $output"
 }
 
-$bundle = Join-Path $root "zig-out\msix\WeekNumberIcon_${Version}.msixbundle"
+$unsignedSuffix = if ($Unsigned) { '-unsigned' } else { '' }
+$bundle = Join-Path $root "zig-out\msix\WeekNumberIcon_${Version}${unsignedSuffix}.msixbundle"
 if (Test-Path $bundle) { Remove-Item $bundle }
 & $makeappx bundle /d $packages /p $bundle /bv $Version /o
 if ($LASTEXITCODE -ne 0) { throw 'makeappx bundle failed.' }

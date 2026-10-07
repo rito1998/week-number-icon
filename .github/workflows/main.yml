@@ -14,13 +14,10 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Zig compiler
-        uses: mlugg/setup-zig@v2
-        with:
-          version: '0.17.0-dev.2329+1b7a78122'
+        uses: mlugg/setup-zig@v2.2.1
 
       - name: Build
-        run: |
-          zig build msix -Dunsigned --release=safe
+        run: zig build msix -Dunsigned --release=safe
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4

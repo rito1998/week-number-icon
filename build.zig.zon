@@ -2,7 +2,7 @@
     .name = .week_number_icon,
     .version = "0.1.1",
     .fingerprint = 0x5ce1e9172b915770,
-    .minimum_zig_version = "0.17.0-dev.2329+1b7a78122",
+    .minimum_zig_version = "0.17.0",
     .dependencies = .{},
     .paths = .{
         "build.zig",

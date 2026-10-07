@@ -1,4 +1,5 @@
 const std = @import("std");
+const version: []const u8 = @import("build.zig.zon").version;
 const ResolvedTarget = std.Build.ResolvedTarget;
 
 pub fn build(b: *std.Build) void {
@@ -13,6 +14,25 @@ pub fn build(b: *std.Build) void {
     for (targets) |target| {
         compileAndInstall(b, target, optimize);
     }
+
+    const msix_step = b.step("msix", "Build MSIX package");
+
+    const options = b.addOptions();
+    const unsigned = b.option(bool, "unsigned", "Create an unsigned MSIX package") orelse false;
+    options.addOption(bool, "unsigned", unsigned);
+
+    const package = b.addSystemCommand(&[_][]const u8{
+        "powershell",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        b.path("packaging/package.ps1").getDisplayName(),
+        if (unsigned) "-Unsigned" else "",
+        "-Version",
+        version ++ ".0",
+    });
+    package.step.dependOn(b.default_step);
+    msix_step.dependOn(&package.step);
 }
 
 fn compileAndInstall(b: *std.Build, target: ResolvedTarget, optimize: std.builtin.Optimize) void {

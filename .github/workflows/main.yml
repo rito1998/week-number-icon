@@ -1,0 +1,59 @@
+name: Automatic build release on tag
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build_and_release:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Zig compiler
+        uses: mlugg/setup-zig@v2
+        with:
+          version: '0.17.0-dev.2329+1b7a78122'
+
+      - name: Build
+        run: |
+          mkdir -p artifacts
+
+          rm -r -f /home/runner/.cache/zig
+          
+          zig build msix -Dunsigned --release=safe
+          tar -czf "artifacts/week-number-icon.tar.gz" -C "artifacts" .
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifacts
+          path: artifacts/*.tar.gz
+
+  release:
+    needs: build_and_release
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: artifacts
+          path: artifacts
+
+      - name: List downloaded artifacts
+        run: ls -lh artifacts
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          files: artifacts/*.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_ONLY_CONTENTS }}

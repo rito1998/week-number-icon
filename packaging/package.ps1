@@ -89,7 +89,7 @@ function New-MsixBundleSet {
         Copy-Item ./assets/logo-44x44.png (Join-Path $stage "assets\logo-44x44.png")
         Copy-Item ./assets/logo-150x150.png (Join-Path $stage "assets\logo-150x150.png")
 
-        $output = Join-Path $packages "WeekNumberIcon_${Version}_${architecture}.msix"
+        $output = Join-Path $packages "WeekNumberIcon-${Version}-${architecture}.msix"
         if (Test-Path $output) { Remove-Item $output }
         & $makeappx pack /d $stage /p $output /o
         if ($LASTEXITCODE -ne 0) { throw "makeappx pack failed for $architecture." }
@@ -100,7 +100,7 @@ function New-MsixBundleSet {
         Write-Host "Created $output"
     }
 
-    $bundle = Join-Path $root "zig-out\msix\WeekNumberIcon_${Version}${suffix}.msixbundle"
+    $bundle = Join-Path $root "zig-out\msix\WeekNumberIcon-${Version}${suffix}.msixbundle"
     if (Test-Path $bundle) { Remove-Item $bundle }
     & $makeappx bundle /d $packages /p $bundle /bv $Version /o
     if ($LASTEXITCODE -ne 0) { throw 'makeappx bundle failed.' }

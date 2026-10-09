@@ -16,18 +16,12 @@ pub fn build(b: *std.Build) void {
     }
 
     const msix_step = b.step("msix", "Build MSIX package");
-
-    const options = b.addOptions();
-    const unsigned = b.option(bool, "unsigned", "Create an unsigned MSIX package") orelse false;
-    options.addOption(bool, "unsigned", unsigned);
-
     const package = b.addSystemCommand(&[_][]const u8{
         "powershell",
         "-ExecutionPolicy",
         "Bypass",
         "-File",
         b.path("packaging/package.ps1").getDisplayName(),
-        if (unsigned) "-Unsigned" else "",
         "-Version",
         version ++ ".0",
     });

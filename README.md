@@ -26,16 +26,16 @@ zig build --release=safe
 
 ### Package MSIX
 
-For local testing, pass `-Dunsigned` to create an unsigned bundle:
+Build MSIX bundle:
 
 ```pwsh
-zig build msix -Dunsigned --release=safe
+zig build msix --release=safe
 ```
 
-Install the local-test bundle from an elevated PowerShell:
+For local testing, install the unsigned msixbundle from an elevated PowerShell:
 
 ```pwsh
-Add-AppxPackage -Path '.\zig-out\msix\*.msixbundle' -AllowUnsigned
+Add-AppxPackage -Path '.\zig-out\msix\*-unsigned.msixbundle' -AllowUnsigned
 ```
 
 ## License

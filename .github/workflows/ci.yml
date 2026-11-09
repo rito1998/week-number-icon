@@ -1,0 +1,36 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Unit tests
+    runs-on: windows-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Zig compiler
+        uses: mlugg/setup-zig@v2.2.1
+
+      - name: Run unit tests
+        run: zig build test
+
+  build:
+    name: Build all targets
+    runs-on: windows-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Zig compiler
+        uses: mlugg/setup-zig@v2.2.1
+
+      - name: Build x86, x64 and ARM64
+        run: zig build --release=safe

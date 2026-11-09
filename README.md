@@ -1,8 +1,11 @@
 # Week Number Icon
 
-Display the current week number in the windows icons tray.
+A tiny Windows tray app that shows the current **ISO week number** in the notification area.
 
-![img](./assets/showcase.png)
+[![CI](https://github.com/rito1998/week-number-icon/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/rito1998/week-number-icon/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+![The Week Number Icon showing the current week in the Windows system tray](./assets/showcase.png)
 
 ## Install
 
@@ -10,7 +13,7 @@ This app is available through the [Microsoft Store](https://apps.microsoft.com/d
 
 [![Get it from Microsoft](https://get.microsoft.com/images/en-us%20dark.svg)](https://get.microsoft.com/installer/download/9p8z35zbqqkw?referrer=appbadge)
 
-Alternatively, install it with winget in PowerShell:
+Alternatively, install it with winget in PowerShell CLI:
 
 ```pwsh
 winget install --id 9P8Z35ZBQQKW --source msstore
@@ -18,15 +21,14 @@ winget install --id 9P8Z35ZBQQKW --source msstore
 
 ## Build
 
-### Build from source
+Requires [Zig](https://ziglang.org/). Building the MSIX
+package additionally needs `makeappx.exe` from the Windows SDK.
 
 ```pwsh
 zig build --release=safe
 ```
 
 ### Package MSIX
-
-Build MSIX bundle:
 
 ```pwsh
 zig build msix --release=safe

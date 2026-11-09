@@ -27,6 +27,36 @@ pub fn build(b: *std.Build) void {
     });
     package.step.dependOn(b.default_step);
     msix_step.dependOn(&package.step);
+
+    addTests(b);
+}
+
+fn addTests(b: *std.Build) void {
+    const test_step = b.step("test", "Run unit tests");
+
+    const host = b.standardTargetOptions(.{});
+
+    const hex_tests = b.addExecutable(.{
+        .name = "hexcolor-test",
+        .root_module = b.createModule(.{
+            .target = host,
+            .optimize = .Debug,
+            .link_libc = true,
+        }),
+    });
+
+    hex_tests.root_module.addCSourceFile(.{
+        .file = b.path("src/hexcolor.c"),
+        .flags = &[_][]const u8{},
+    });
+
+    hex_tests.root_module.addCSourceFile(.{
+        .file = b.path("tests/hexcolor_test.c"),
+        .flags = &[_][]const u8{},
+    });
+
+    const run_hex_tests = b.addRunArtifact(hex_tests);
+    test_step.dependOn(&run_hex_tests.step);
 }
 
 fn compileAndInstall(b: *std.Build, target: ResolvedTarget, optimize: std.builtin.Optimize) void {
@@ -46,9 +76,16 @@ fn compileAndInstall(b: *std.Build, target: ResolvedTarget, optimize: std.builti
         },
     });
 
+    exe.root_module.addCSourceFile(.{
+        .file = b.path("src/hexcolor.c"),
+        .flags = &[_][]const u8{},
+    });
+
     exe.root_module.linkSystemLibrary("user32", .{});
     exe.root_module.linkSystemLibrary("shell32", .{});
     exe.root_module.linkSystemLibrary("gdi32", .{});
+    exe.root_module.linkSystemLibrary("advapi32", .{}); // registry settings
+    exe.root_module.linkSystemLibrary("comdlg32", .{}); // ChooseColorW
     exe.subsystem = .windows; // necessary together with "-mwindows" to prevent showing console
 
     const install_artifact = b.addInstallArtifact(exe, .{

@@ -1,20 +1,24 @@
-name: Automatic build release on tag
+name: release
 
 on:
   push:
     tags:
-      - '*'
+      - 'v*'
 
 jobs:
   build:
     runs-on: windows-latest
-    permissions: write-all
+    permissions:
+      contents: read
     steps:
       - name: Check out code
         uses: actions/checkout@v4
 
       - name: Set up Zig compiler
         uses: mlugg/setup-zig@v2.2.1
+
+      - name: Run unit tests
+        run: zig build test
 
       - name: Build MSIX bundles
         run: zig build msix --release=safe
@@ -28,7 +32,8 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
-    permissions: write-all
+    permissions:
+      contents: write
     steps:
       - name: Download build artifacts
         uses: actions/download-artifact@v4
@@ -43,6 +48,7 @@ jobs:
           name: ${{ github.ref_name }}
           draft: false
           prerelease: false
+          generate_release_notes: true
           files: artifacts/*.msixbundle
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_ONLY_CONTENTS }}

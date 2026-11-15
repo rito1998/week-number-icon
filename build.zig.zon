@@ -1,6 +1,6 @@
 .{
     .name = .week_number_icon,
-    .version = "0.2.0",
+    .version = "0.2.1",
     .fingerprint = 0x5ce1e9172b915770,
     .minimum_zig_version = "0.17.0",
     .dependencies = .{},
